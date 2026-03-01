@@ -21,20 +21,110 @@
             justify-content: center;
             padding: 2rem;
             line-height: 1.6;
+            overflow: hidden;
+            position: relative;
         }
+        
+        /* Lava lamp background */
+        .lava-lamp {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(60px);
+            opacity: 0.6;
+        }
+        .lava-blob {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        .lava-blob:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff6b6b, transparent);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .lava-blob:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #4ecdc4, transparent);
+            top: 60%;
+            left: 70%;
+            animation-delay: -5s;
+        }
+        .lava-blob:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #ffe66d, transparent);
+            top: 70%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        .lava-blob:nth-child(4) {
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, #ff6b6b, transparent);
+            top: 20%;
+            left: 80%;
+            animation-delay: -15s;
+        }
+        .lava-blob:nth-child(5) {
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, #a8e6cf, transparent);
+            top: 40%;
+            left: 50%;
+            animation-delay: -7s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+        
         .container {
             max-width: 600px;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
+        
         h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             font-weight: 600;
+            position: relative;
+            display: inline-block;
         }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: orbit 3s linear infinite;
+        }
+        
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(var(--radius)) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: rotate(360deg) translateX(var(--radius)) rotate(-360deg); opacity: 0; }
+        }
+        
         p {
             font-size: 1.1rem;
             color: #666;
             margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
         }
         a {
             display: inline-block;
@@ -45,10 +135,13 @@
             text-decoration: none;
             font-weight: 500;
             transition: background 0.2s;
+            position: relative;
+            z-index: 1;
         }
         a:hover {
             background: #0052a3;
         }
+        
         @media (prefers-color-scheme: dark) {
             body {
                 background: #1a1a1a;
@@ -64,14 +157,70 @@
             a:hover {
                 background: #4da3ff;
             }
+            .lava-lamp {
+                opacity: 0.4;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="lava-lamp">
+        <div class="lava-blob"></div>
+        <div class="lava-blob"></div>
+        <div class="lava-blob"></div>
+        <div class="lava-blob"></div>
+        <div class="lava-blob"></div>
+    </div>
+    
     <div class="container">
-        <h1>Welcome to my web garden</h1>
+        <h1 id="title">Welcome to my web garden</h1>
         <p>A quiet corner of the internet where I share thoughts, notes, and ideas.</p>
         <a href="/usualblog/">Visit Blog →</a>
     </div>
+    
+    <script>
+        const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff8c42', '#a8e6cf', '#ff6b9d', '#c4a5ff', '#6b9fff'];
+        const title = document.getElementById('title');
+        
+        function createCircle() {
+            const circle = document.createElement('div');
+            circle.className = 'circle';
+            
+            const size = Math.random() * 20 + 10;
+            const radius = Math.random() * 100 + 80;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const duration = Math.random() * 2 + 2;
+            
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.background = `radial-gradient(circle, ${color}, transparent)`;
+            circle.style.setProperty('--radius', radius + 'px');
+            circle.style.animationDuration = duration + 's';
+            
+            const rect = title.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const angle = Math.random() * Math.PI * 2;
+            const offsetX = Math.cos(angle) * 50;
+            const offsetY = Math.sin(angle) * 30;
+            
+            circle.style.left = (centerX + offsetX) + 'px';
+            circle.style.top = (centerY + offsetY) + 'px';
+            
+            document.body.appendChild(circle);
+            
+            setTimeout(() => {
+                circle.remove();
+            }, duration * 1000);
+        }
+        
+        setInterval(createCircle, 300);
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.circle').forEach(c => c.remove());
+        });
+    </script>
 </body>
 </html>
