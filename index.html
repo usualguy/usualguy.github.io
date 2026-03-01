@@ -34,60 +34,59 @@
             height: 100%;
             z-index: -1;
             overflow: hidden;
-            filter: blur(60px);
-            opacity: 0.6;
         }
         .lava-blob {
             position: absolute;
             border-radius: 50%;
-            animation: float 20s infinite ease-in-out;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 25s infinite ease-in-out;
         }
         .lava-blob:nth-child(1) {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, #ff6b6b, transparent);
-            top: 10%;
-            left: 10%;
+            width: 500px;
+            height: 500px;
+            background: #ff6b6b;
+            top: -10%;
+            left: -5%;
             animation-delay: 0s;
         }
         .lava-blob:nth-child(2) {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, #4ecdc4, transparent);
-            top: 60%;
-            left: 70%;
-            animation-delay: -5s;
+            width: 400px;
+            height: 400px;
+            background: #4ecdc4;
+            top: 50%;
+            left: 60%;
+            animation-delay: -8s;
         }
         .lava-blob:nth-child(3) {
-            width: 350px;
-            height: 350px;
-            background: radial-gradient(circle, #ffe66d, transparent);
-            top: 70%;
-            left: 20%;
-            animation-delay: -10s;
+            width: 450px;
+            height: 450px;
+            background: #ffe66d;
+            top: 60%;
+            left: 10%;
+            animation-delay: -16s;
         }
         .lava-blob:nth-child(4) {
-            width: 280px;
-            height: 280px;
-            background: radial-gradient(circle, #ff6b6b, transparent);
-            top: 20%;
-            left: 80%;
-            animation-delay: -15s;
+            width: 380px;
+            height: 380px;
+            background: #ff8c42;
+            top: 10%;
+            left: 70%;
+            animation-delay: -12s;
         }
         .lava-blob:nth-child(5) {
-            width: 320px;
-            height: 320px;
-            background: radial-gradient(circle, #a8e6cf, transparent);
-            top: 40%;
-            left: 50%;
-            animation-delay: -7s;
+            width: 420px;
+            height: 420px;
+            background: #a8e6cf;
+            top: 30%;
+            left: 40%;
+            animation-delay: -20s;
         }
         
         @keyframes float {
             0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -30px) scale(1.1); }
-            50% { transform: translate(-20px, 20px) scale(0.9); }
-            75% { transform: translate(20px, 30px) scale(1.05); }
+            33% { transform: translate(50px, -40px) scale(1.15); }
+            66% { transform: translate(-30px, 30px) scale(0.95); }
         }
         
         .container {
@@ -105,18 +104,29 @@
             display: inline-block;
         }
         
-        .circle {
+        .outline-element {
             position: absolute;
-            border-radius: 50%;
             pointer-events: none;
-            animation: orbit 3s linear infinite;
+            opacity: 0;
+            animation: fade-drift 3s ease-in-out forwards;
+            font-size: 14px;
         }
         
-        @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(var(--radius)) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: rotate(360deg) translateX(var(--radius)) rotate(-360deg); opacity: 0; }
+        @keyframes fade-drift {
+            0% { 
+                opacity: 0; 
+                transform: translate(0, 0) scale(0.5) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(var(--dx, 30px), var(--dy, -50px)) scale(1.2) rotate(var(--rot, 180deg));
+            }
         }
         
         p {
@@ -179,47 +189,93 @@
     </div>
     
     <script>
+        const emojis = ['🌸', '🦋', '✨', '🌿', '🍃', '⭐', '🌙', '💫', '🎨', '🪐', '🌺', '🍀', '🌻', '💜', '🧡'];
         const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff8c42', '#a8e6cf', '#ff6b9d', '#c4a5ff', '#6b9fff'];
         const title = document.getElementById('title');
         
-        function createCircle() {
-            const circle = document.createElement('div');
-            circle.className = 'circle';
+        function createRandomElement(x, y) {
+            const element = document.createElement('div');
+            element.className = 'outline-element';
             
-            const size = Math.random() * 20 + 10;
-            const radius = Math.random() * 100 + 80;
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const duration = Math.random() * 2 + 2;
+            const type = Math.random();
             
-            circle.style.width = size + 'px';
-            circle.style.height = size + 'px';
-            circle.style.background = `radial-gradient(circle, ${color}, transparent)`;
-            circle.style.setProperty('--radius', radius + 'px');
-            circle.style.animationDuration = duration + 's';
+            if (type < 0.4) {
+                // Emoji
+                element.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                element.style.fontSize = (Math.random() * 10 + 12) + 'px';
+            } else if (type < 0.7) {
+                // Circle
+                const size = Math.random() * 12 + 8;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                element.style.width = size + 'px';
+                element.style.height = size + 'px';
+                element.style.borderRadius = '50%';
+                element.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                element.style.boxShadow = `0 0 10px ${color}`;
+            } else {
+                // Tiny line
+                const width = Math.random() * 20 + 10;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                element.style.width = width + 'px';
+                element.style.height = '2px';
+                element.style.background = color;
+                element.style.borderRadius = '2px';
+            }
             
-            const rect = title.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+            // Random drift direction
+            const dx = (Math.random() - 0.5) * 80;
+            const dy = -Math.random() * 60 - 20;
+            const rot = (Math.random() - 0.5) * 360;
+            element.style.setProperty('--dx', dx + 'px');
+            element.style.setProperty('--dy', dy + 'px');
+            element.style.setProperty('--rot', rot + 'deg');
             
-            const angle = Math.random() * Math.PI * 2;
-            const offsetX = Math.cos(angle) * 50;
-            const offsetY = Math.sin(angle) * 30;
+            element.style.left = x + 'px';
+            element.style.top = y + 'px';
             
-            circle.style.left = (centerX + offsetX) + 'px';
-            circle.style.top = (centerY + offsetY) + 'px';
-            
-            document.body.appendChild(circle);
+            document.body.appendChild(element);
             
             setTimeout(() => {
-                circle.remove();
-            }, duration * 1000);
+                element.remove();
+            }, 3000);
         }
         
-        setInterval(createCircle, 300);
+        function spawnAlongTextOutline() {
+            const rect = title.getBoundingClientRect();
+            const padding = 8;
+            
+            // Top edge
+            for (let i = 0; i < rect.width; i += 25) {
+                if (Math.random() > 0.6) {
+                    createRandomElement(rect.left + i, rect.top - padding);
+                }
+            }
+            // Bottom edge
+            for (let i = 0; i < rect.width; i += 25) {
+                if (Math.random() > 0.6) {
+                    createRandomElement(rect.left + i, rect.bottom + padding);
+                }
+            }
+            // Left edge
+            for (let i = 0; i < rect.height; i += 20) {
+                if (Math.random() > 0.6) {
+                    createRandomElement(rect.left - padding, rect.top + i);
+                }
+            }
+            // Right edge
+            for (let i = 0; i < rect.height; i += 20) {
+                if (Math.random() > 0.6) {
+                    createRandomElement(rect.right + padding, rect.top + i);
+                }
+            }
+        }
+        
+        // Spawn elements around text outline
+        setInterval(spawnAlongTextOutline, 800);
         
         // Handle resize
         window.addEventListener('resize', () => {
-            document.querySelectorAll('.circle').forEach(c => c.remove());
+            document.querySelectorAll('.outline-element').forEach(c => c.remove());
         });
     </script>
 </body>
